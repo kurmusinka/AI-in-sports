@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИИ в спорте — Проектная работа</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lavender: #EDE7F6;
+  --mint: #E8F5F0;
+  --peach: #FFF0E8;
+  --sky: #E3F2FD;
+  --rose: #FCE4EC;
+  --cream: #FFFDE7;
+  --purple: #7C4DFF;
+  --purple-dk: #5E35B1;
+  --teal: #00BFA5;
+  --teal-dk: #00897B;
+  --coral: #FF6B6B;
+  --coral-dk: #E53935;
+  --blue: #448AFF;
+  --blue-dk: #1565C0;
+  --pink: #F06292;
+  --pink-dk: #C2185B;
+  --amber: #FFD740;
+  --amber-dk: #F57F17;
+  --green: #69F0AE;
+  --green-dk: #2E7D32;
+  --dark: #1A1A2E;
+  --mid: #4A4A6A;
+  --light: #8888AA;
+  --white: #FFFFFF;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Geologica', sans-serif;
+  background: var(--dark);
+  color: var(--white);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Custom cursor ───────────────────────────────────────────────────── */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--purple);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transition: transform .15s ease, background .2s;
+  mix-blend-mode: exclusion;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--purple);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transition: transform .35s cubic-bezier(.23,1,.32,1), opacity .2s;
+  opacity: .6;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 3rem;
+  background: rgba(26,26,46,.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(124,77,255,.2);
+}
+.nav-logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .85rem; font-weight: 700;
+  color: var(--purple);
+  letter-spacing: .05em;
+}
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: .8rem; color: rgba(255,255,255,.6);
+  text-decoration: none; letter-spacing: .08em;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--purple); }
+
+/* ── Progress bar ────────────────────────────────────────────────────── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--purple), var(--coral), var(--teal));
+  z-index: 200; width: 0%;
+  transition: width .1s linear;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────── */
+section {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6rem 3rem 4rem;
+  position: relative; overflow: hidden;
+}
+
+/* ── Floating blobs ──────────────────────────────────────────────────── */
+.blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); opacity: .18;
+  pointer-events: none; z-index: 0;
+  animation: blobFloat 8s ease-in-out infinite alternate;
+}
+@keyframes blobFloat {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(30px,-20px) scale(1.08); }
+}
+
+/* ── Reveal animation ────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity .7s cubic-bezier(.23,1,.32,1), transform .7s cubic-bezier(.23,1,.32,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+.reveal-delay-5 { transition-delay: .5s; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 1 — HERO
+══════════════════════════════════════════════════════════════════════ */
+#hero {
+  background: radial-gradient(ellipse at 20% 50%, #2D1B69 0%, var(--dark) 60%);
+  flex-direction: column; text-align: center; gap: 0;
+}
+.hero-eyebrow {
+  font-family: 'Geologica', sans-serif;
+  font-size: .75rem; font-weight: 500;
+  letter-spacing: .25em; text-transform: uppercase;
+  color: var(--purple); margin-bottom: 1.5rem;
+  border: 1px solid rgba(124,77,255,.4);
+  padding: .4rem 1.2rem; border-radius: 100px;
+  display: inline-block;
+}
+.hero-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 6.5rem);
+  font-weight: 900; line-height: 1.0;
+  letter-spacing: -.02em;
+  margin-bottom: 1.5rem;
+}
+.hero-title .line1 { color: var(--white); display: block; }
+.hero-title .line2 { color: var(--white); display: block; }
+.hero-title .accent {
+  background: linear-gradient(135deg, var(--purple) 0%, var(--coral) 50%, var(--teal) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: block;
+}
+.hero-sub {
+  font-size: 1.1rem; color: rgba(255,255,255,.55);
+  max-width: 580px; margin: 0 auto 2.5rem;
+  line-height: 1.7;
+}
+.hero-meta {
+  display: flex; gap: 2rem; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 3rem;
+}
+.hero-meta-item {
+  font-size: .8rem; color: rgba(255,255,255,.4);
+  letter-spacing: .06em;
+}
+.hero-meta-item span { color: rgba(255,255,255,.8); }
+.hero-chips {
+  display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap;
+}
+.chip {
+  padding: .5rem 1.2rem; border-radius: 100px;
+  font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+  border: 1.5px solid; cursor: default;
+}
+.chip-purple { border-color: var(--purple); color: var(--purple); background: rgba(124,77,255,.1); }
+.chip-teal   { border-color: var(--teal);   color: var(--teal);   background: rgba(0,191,165,.1); }
+.chip-coral  { border-color: var(--coral);  color: var(--coral);  background: rgba(255,107,107,.1); }
+.chip-blue   { border-color: var(--blue);   color: var(--blue);   background: rgba(68,138,255,.1); }
+
+.scroll-hint {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  color: rgba(255,255,255,.3); font-size: .7rem; letter-spacing: .1em;
+}
+.scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--purple), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity: .3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* floating orbs hero */
+.hero-orb {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; z-index: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 2 — АКТУАЛЬНОСТЬ
+══════════════════════════════════════════════════════════════════════ */
+#relevance {
+  background: linear-gradient(160deg, #0D1B2A 0%, #1A0E3F 100%);
+}
+.section-inner { max-width: 1100px; width: 100%; z-index: 1; }
+.section-label {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .65rem; font-weight: 700; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--purple);
+  margin-bottom: 1rem; display: block;
+}
+.section-heading {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900; line-height: 1.15;
+  margin-bottom: 3rem; color: var(--white);
+}
+.two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.rel-card {
+  border-radius: 24px; padding: 2.5rem;
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.rel-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,.4); }
+.rel-card.card-1 { background: linear-gradient(135deg, rgba(124,77,255,.2) 0%, rgba(68,138,255,.1) 100%); }
+.rel-card.card-2 { background: linear-gradient(135deg, rgba(255,107,107,.2) 0%, rgba(255,182,82,.1) 100%); }
+.card-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 4rem; font-weight: 900; line-height: 1;
+  opacity: .15; position: absolute; top: 1rem; right: 1.5rem;
+}
+.card-1 .card-num { color: var(--purple); }
+.card-2 .card-num { color: var(--coral); }
+.card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.card-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+  margin-bottom: .8rem; color: var(--white);
+}
+.card-body { font-size: .92rem; color: rgba(255,255,255,.6); line-height: 1.7; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 3 — ЦЕЛЬ И ЗАДАЧИ
+══════════════════════════════════════════════════════════════════════ */
+#goal {
+  background: linear-gradient(150deg, #0A1628 0%, #0D2A1E 100%);
+}
+.goal-box {
+  background: linear-gradient(135deg, rgba(0,191,165,.15) 0%, rgba(0,137,123,.08) 100%);
+  border: 1.5px solid rgba(0,191,165,.3);
+  border-radius: 20px; padding: 2rem 2.5rem;
+  margin-bottom: 2.5rem;
+  position: relative; overflow: hidden;
+}
+.goal-box::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background: linear-gradient(to bottom, var(--teal), var(--blue));
+  border-radius: 4px 0 0 4px;
+}
+.goal-label {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: .7rem; display: block;
+}
+.goal-text {
+  font-size: 1.05rem; color: var(--white); line-height: 1.7; font-weight: 400;
+}
+.tasks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.task-item {
+  display: flex; align-items: flex-start; gap: 1rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px; padding: 1.2rem 1.4rem;
+  transition: background .2s, border-color .2s;
+}
+.task-item:hover { background: rgba(255,255,255,.07); border-color: rgba(124,77,255,.3); }
+.task-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.4rem; font-weight: 900;
+  min-width: 2rem; line-height: 1;
+}
+.task-n1 { color: var(--purple); }
+.task-n2 { color: var(--teal); }
+.task-n3 { color: var(--blue); }
+.task-n4 { color: var(--pink); }
+.task-n5 { color: var(--coral); }
+.task-text { font-size: .9rem; color: rgba(255,255,255,.7); line-height: 1.6; padding-top: .2rem; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 4 — МЕТОДЫ
+══════════════════════════════════════════════════════════════════════ */
+#methods {
+  background: linear-gradient(160deg, #1A0533 0%, #0D1B2A 100%);
+}
+.methods-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+.method-card {
+  border-radius: 20px; padding: 2rem;
+  border: 1px solid rgba(255,255,255,.07);
+  transition: transform .3s, box-shadow .3s;
+  position: relative; overflow: hidden;
+}
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+.method-card.m1 { background: linear-gradient(135deg, rgba(124,77,255,.12), rgba(94,53,177,.05)); }
+.method-card.m2 { background: linear-gradient(135deg, rgba(0,191,165,.12), rgba(0,137,123,.05)); }
+.method-card.m3 { background: linear-gradient(135deg, rgba(124,77,255,.12), rgba(94,53,177,.05)); }
+.method-card.m4 { background: linear-gradient(135deg, rgba(0,191,165,.12), rgba(0,137,123,.05)); }
+.method-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.method-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .95rem; font-weight: 700;
+  color: var(--white); margin-bottom: .6rem;
+}
+.method-body { font-size: .87rem; color: rgba(255,255,255,.55); line-height: 1.65; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 5 — РЕЗУЛЬТАТЫ: ИИ В СПОРТЕ
+══════════════════════════════════════════════════════════════════════ */
+#results {
+  background: linear-gradient(155deg, #0D2215 0%, #0A1628 100%);
+  flex-direction: column; align-items: flex-start;
+}
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem;
+  margin-bottom: 2.5rem; width: 100%;
+}
+.stat-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px; padding: 1.8rem 1.5rem;
+  text-align: center;
+  transition: transform .3s, border-color .3s;
+}
+.stat-card:hover { transform: translateY(-4px); }
+.stat-card.s1:hover { border-color: var(--purple); }
+.stat-card.s2:hover { border-color: var(--teal); }
+.stat-card.s3:hover { border-color: var(--coral); }
+.stat-card.s4:hover { border-color: var(--blue); }
+.stat-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.4rem; font-weight: 900; line-height: 1;
+  margin-bottom: .5rem;
+}
+.s1 .stat-num { color: var(--purple); }
+.s2 .stat-num { color: var(--teal); }
+.s3 .stat-num { color: var(--coral); }
+.s4 .stat-num { color: var(--blue); }
+.stat-label { font-size: .8rem; color: rgba(255,255,255,.5); line-height: 1.5; }
+
+.results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; width: 100%; }
+.res-card {
+  border-radius: 20px; padding: 2rem;
+  border: 1px solid rgba(255,255,255,.07);
+  display: flex; gap: 1.2rem; align-items: flex-start;
+  transition: border-color .25s, background .25s;
+}
+.res-card:hover { background: rgba(255,255,255,.04); }
+.res-card.r1 { border-color: rgba(124,77,255,.25); }
+.res-card.r2 { border-color: rgba(0,191,165,.25); }
+.res-card.r3 { border-color: rgba(255,107,107,.25); }
+.res-card.r4 { border-color: rgba(255,215,64,.25); }
+.res-card:hover.r1 { border-color: var(--purple); }
+.res-card:hover.r2 { border-color: var(--teal); }
+.res-card:hover.r3 { border-color: var(--coral); }
+.res-card:hover.r4 { border-color: var(--amber); }
+.res-icon-wrap {
+  width: 52px; height: 52px; min-width: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+}
+.r1 .res-icon-wrap { background: rgba(124,77,255,.2); }
+.r2 .res-icon-wrap { background: rgba(0,191,165,.2); }
+.r3 .res-icon-wrap { background: rgba(255,107,107,.2); }
+.r4 .res-icon-wrap { background: rgba(255,215,64,.2); }
+.res-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .9rem; font-weight: 700;
+  color: var(--white); margin-bottom: .4rem;
+}
+.res-body { font-size: .85rem; color: rgba(255,255,255,.55); line-height: 1.65; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 6 — СЕРВИСЫ В РОССИИ
+══════════════════════════════════════════════════════════════════════ */
+#russia {
+  background: linear-gradient(160deg, #0A1628 0%, #1A0533 100%);
+  flex-direction: column; align-items: flex-start;
+}
+.services-table { width: 100%; border-collapse: separate; border-spacing: 0 .6rem; }
+.services-table thead th {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .65rem; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: rgba(255,255,255,.35);
+  padding: .6rem 1.5rem; text-align: left;
+}
+.services-table tbody tr {
+  background: rgba(255,255,255,.04);
+  border-radius: 16px;
+  transition: background .2s;
+  cursor: default;
+}
+.services-table tbody tr:hover { background: rgba(255,255,255,.08); }
+.services-table tbody td {
+  padding: 1.3rem 1.5rem; font-size: .9rem; color: rgba(255,255,255,.75);
+  vertical-align: middle;
+}
+.services-table tbody td:first-child { border-radius: 16px 0 0 16px; }
+.services-table tbody td:last-child  { border-radius: 0 16px 16px 0; }
+.svc-name {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .9rem; font-weight: 700; color: var(--white);
+  display: flex; align-items: center; gap: .8rem;
+}
+.svc-icon { font-size: 1.4rem; }
+.badge {
+  display: inline-block; padding: .3rem .9rem;
+  border-radius: 100px; font-size: .75rem; font-weight: 700;
+}
+.badge-high { background: rgba(0,191,165,.2); color: var(--teal); border: 1px solid rgba(0,191,165,.4); }
+.badge-mid  { background: rgba(255,215,64,.2); color: var(--amber); border: 1px solid rgba(255,215,64,.4); }
+.svc-funcs { font-size: .85rem; color: rgba(255,255,255,.5); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 7 — ИИ ПРИ ТРАВМЕ
+══════════════════════════════════════════════════════════════════════ */
+#injury {
+  background: linear-gradient(155deg, #1A0533 0%, #0A1628 100%);
+  flex-direction: column; align-items: flex-start;
+}
+.injury-intro {
+  background: linear-gradient(135deg, rgba(255,107,107,.12), rgba(240,98,146,.08));
+  border: 1.5px solid rgba(255,107,107,.25);
+  border-radius: 20px; padding: 1.8rem 2.2rem;
+  margin-bottom: 2rem; width: 100%;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.injury-intro-icon { font-size: 2.5rem; }
+.injury-intro-text { font-size: .95rem; color: rgba(255,255,255,.75); line-height: 1.7; }
+.injury-intro-text strong { color: var(--coral); }
+.monitor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; width: 100%; }
+.monitor-card {
+  border-radius: 20px; padding: 1.8rem;
+  border: 1px solid rgba(255,255,255,.07);
+  transition: transform .3s, box-shadow .3s;
+  position: relative;
+}
+.monitor-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.monitor-card.mc1 { background: linear-gradient(135deg, rgba(255,107,107,.1), rgba(240,98,146,.05)); }
+.monitor-card.mc2 { background: linear-gradient(135deg, rgba(124,77,255,.1), rgba(94,53,177,.05)); }
+.monitor-card.mc3 { background: linear-gradient(135deg, rgba(0,191,165,.1), rgba(0,137,123,.05)); }
+.monitor-card.mc4 { background: linear-gradient(135deg, rgba(68,138,255,.1), rgba(21,101,192,.05)); }
+.monitor-card.mc5 { background: linear-gradient(135deg, rgba(255,215,64,.1), rgba(245,127,23,.05)); }
+.monitor-card.mc6 { background: linear-gradient(135deg, rgba(240,98,146,.1), rgba(194,24,91,.05)); }
+.mc-icon { font-size: 2rem; margin-bottom: .8rem; display: block; }
+.mc-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .85rem; font-weight: 700;
+  color: var(--white); margin-bottom: .5rem;
+}
+.mc1 .mc-title { color: var(--coral); }
+.mc2 .mc-title { color: var(--purple); }
+.mc3 .mc-title { color: var(--teal); }
+.mc4 .mc-title { color: var(--blue); }
+.mc5 .mc-title { color: var(--amber); }
+.mc6 .mc-title { color: var(--pink); }
+.mc-body { font-size: .83rem; color: rgba(255,255,255,.5); line-height: 1.6; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 8 — ПРОБЛЕМЫ
+══════════════════════════════════════════════════════════════════════ */
+#problems {
+  background: linear-gradient(160deg, #0D1B2A 0%, #1A1A0A 100%);
+  flex-direction: column; align-items: flex-start;
+}
+.problems-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; width: 100%; }
+.prob-card {
+  border-radius: 20px; padding: 2rem;
+  border-left: 4px solid;
+  background: rgba(255,255,255,.03);
+  border-top: 1px solid rgba(255,255,255,.06);
+  border-right: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  transition: background .2s;
+}
+.prob-card:hover { background: rgba(255,255,255,.06); }
+.prob-card.p1 { border-left-color: var(--amber); }
+.prob-card.p2 { border-left-color: var(--purple); }
+.prob-card.p3 { border-left-color: var(--blue); }
+.prob-card.p4 { border-left-color: var(--coral); }
+.prob-icon { font-size: 1.8rem; margin-bottom: .8rem; display: block; }
+.prob-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .9rem; font-weight: 700;
+  color: var(--white); margin-bottom: .5rem;
+}
+.prob-body { font-size: .87rem; color: rgba(255,255,255,.55); line-height: 1.65; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SLIDE 9 — ЗАКЛЮЧЕНИЕ
+══════════════════════════════════════════════════════════════════════ */
+#conclusion {
+  background: radial-gradient(ellipse at 50% 30%, #2D1B69 0%, var(--dark) 70%);
+  flex-direction: column; text-align: center;
+}
+.conclusion-heading {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
+  line-height: 1.1; margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--white) 30%, var(--purple) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.conclusion-sub { font-size: 1rem; color: rgba(255,255,255,.45); margin-bottom: 3rem; }
+.conclusions-list { display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: 800px; width: 100%; margin-bottom: 3rem; }
+.conc-item {
+  display: flex; align-items: flex-start; gap: 1.2rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 18px; padding: 1.4rem 1.8rem; text-align: left;
+  transition: border-color .25s, background .25s;
+}
+.conc-item:hover { border-color: var(--purple); background: rgba(124,77,255,.08); }
+.conc-check { font-size: 1.4rem; margin-top: .1rem; min-width: 1.4rem; }
+.conc-content { flex: 1; }
+.conc-title { font-family: 'Unbounded', sans-serif; font-size: .9rem; font-weight: 700; color: var(--white); margin-bottom: .3rem; }
+.conc-body { font-size: .87rem; color: rgba(255,255,255,.55); line-height: 1.6; }
+.significance-box {
+  max-width: 800px; width: 100%;
+  background: linear-gradient(135deg, rgba(124,77,255,.15), rgba(0,191,165,.1));
+  border: 1.5px solid rgba(124,77,255,.3);
+  border-radius: 20px; padding: 1.8rem 2.5rem;
+}
+.sig-label {
+  font-family: 'Unbounded', sans-serif;
+  font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: .6rem; display: block;
+}
+.sig-text { font-size: .95rem; color: rgba(255,255,255,.75); line-height: 1.7; }
+.sig-text em { color: var(--purple); font-style: normal; font-weight: 600; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════════════════════ */
+footer {
+  background: #0D0D1A;
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 2rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-left { font-size: .8rem; color: rgba(255,255,255,.3); }
+.footer-right { font-size: .8rem; color: rgba(255,255,255,.2); letter-spacing: .05em; }
+
+/* ── Mobile ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  section { padding: 5rem 1.5rem 3rem; }
+  .two-cols, .tasks-grid, .methods-grid, .results-grid,
+  .problems-grid, .monitor-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { font-size: 2.2rem; }
+  .services-table thead { display: none; }
+  .services-table tbody tr { display: block; margin-bottom: 1rem; border-radius: 16px; }
+  .services-table tbody td { display: block; }
+  footer { flex-direction: column; text-align: center; }
+}
+
+/* ── Number counter animation ─────────────────────────────────────── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.count-animate { animation: countUp .6s cubic-bezier(.23,1,.32,1) forwards; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">ИИ × СПОРТ</span>
+  <ul class="nav-links">
+    <li><a href="#relevance">Актуальность</a></li>
+    <li><a href="#goal">Цель</a></li>
+    <li><a href="#results">Результаты</a></li>
+    <li><a href="#russia">Сервисы</a></li>
+    <li><a href="#injury">При травме</a></li>
+    <li><a href="#conclusion">Выводы</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 1 — HERO
+════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="blob" style="width:600px;height:600px;background:var(--purple);top:-200px;left:-150px;animation-duration:10s;"></div>
+  <div class="blob" style="width:400px;height:400px;background:var(--teal);bottom:-100px;right:-100px;animation-duration:7s;animation-delay:-3s;"></div>
+  <div class="blob" style="width:300px;height:300px;background:var(--coral);top:30%;right:10%;animation-duration:9s;animation-delay:-5s;"></div>
+
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;">
+    <div class="hero-eyebrow reveal">Проектная работа • Физическая культура • 2024–2025</div>
+    <h1 class="hero-title reveal reveal-delay-1">
+      <span class="line1">Применение</span>
+      <span class="line2">искусственного</span>
+      <span class="accent">интеллекта</span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">в физической культуре и спорте — от профессиональных арен до реабилитации после травмы</p>
+    <div class="hero-meta reveal reveal-delay-3">
+      <div class="hero-meta-item">Ученик: <span>________________</span></div>
+      <div class="hero-meta-item">Класс: <span>______</span></div>
+      <div class="hero-meta-item">Руководитель: <span>________________</span></div>
+    </div>
+    <div class="hero-chips reveal reveal-delay-4">
+      <span class="chip chip-purple">🤖 ИИ-технологии</span>
+      <span class="chip chip-teal">🏃 Физкультура</span>
+      <span class="chip chip-coral">💊 Реабилитация</span>
+      <span class="chip chip-blue">📊 Аналитика</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>ЛИСТАЙ ВНИЗ</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 2 — АКТУАЛЬНОСТЬ
+════════════════════════════════════════════ -->
+<section id="relevance">
+  <div class="blob" style="width:500px;height:500px;background:var(--blue);top:-100px;right:-100px;opacity:.12;"></div>
+  <div class="section-inner">
+    <span class="section-label reveal">02 — Актуальность</span>
+    <h2 class="section-heading reveal reveal-delay-1">Почему это важно<br>прямо сейчас?</h2>
+    <div class="two-cols">
+      <div class="rel-card card-1 reveal reveal-delay-2">
+        <div class="card-num">01</div>
+        <div class="card-icon">🤖</div>
+        <div class="card-title">ИИ меняет спорт уже сегодня</div>
+        <div class="card-body">Автоматическое определение офсайда на ЧМ-2022, умные GPS-жилеты в Премьер-лиге, системы предотвращения травм — это не будущее, а настоящее. Разрыв между профессиональным и любительским спортом сокращается каждый год.</div>
+      </div>
+      <div class="rel-card card-2 reveal reveal-delay-3">
+        <div class="card-num">02</div>
+        <div class="card-icon">🦵</div>
+        <div class="card-title">Личная мотивация</div>
+        <div class="card-body">Автор проекта проходит реабилитацию после травмы ноги и не может выполнять обычные физические упражнения. Это побудило исследовать, как ИИ-технологии помогают контролировать состояние здоровья без активных нагрузок.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 3 — ЦЕЛЬ И ЗАДАЧИ
+════════════════════════════════════════════ -->
+<section id="goal">
+  <div class="blob" style="width:450px;height:450px;background:var(--teal);bottom:-80px;left:-80px;opacity:.1;"></div>
+  <div class="section-inner">
+    <span class="section-label reveal">03 — Цель и задачи</span>
+    <h2 class="section-heading reveal reveal-delay-1">Что изучаем<br>и зачем?</h2>
+    <div class="goal-box reveal reveal-delay-2">
+      <span class="goal-label">🎯 Цель проекта</span>
+      <p class="goal-text">Изучить возможности применения искусственного интеллекта в физической культуре и спорте и определить, какие ИИ-инструменты доступны в России и применимы при ограниченной физической нагрузке.</p>
+    </div>
+    <div class="tasks-grid">
+      <div class="task-item reveal reveal-delay-2">
+        <span class="task-num task-n1">1</span>
+        <span class="task-text">Рассмотреть основные технологии ИИ, применяемые в спорте</span>
+      </div>
+      <div class="task-item reveal reveal-delay-3">
+        <span class="task-num task-n2">2</span>
+        <span class="task-text">Описать конкретные примеры применения ИИ в профессиональном спорте</span>
+      </div>
+      <div class="task-item reveal reveal-delay-3">
+        <span class="task-num task-n3">3</span>
+        <span class="task-text">Провести сравнительный анализ ИИ-сервисов, доступных в России</span>
+      </div>
+      <div class="task-item reveal reveal-delay-4">
+        <span class="task-num task-n4">4</span>
+        <span class="task-text">Выявить функции, востребованные при ограниченной нагрузке</span>
+      </div>
+      <div class="task-item reveal reveal-delay-4" style="grid-column:1/-1;">
+        <span class="task-num task-n5">5</span>
+        <span class="task-text">Сформулировать практические рекомендации для студентов на реабилитации</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 4 — МЕТОДЫ
+════════════════════════════════════════════ -->
+<section id="methods">
+  <div class="blob" style="width:400px;height:400px;background:var(--purple);top:50%;right:-80px;opacity:.12;"></div>
+  <div class="section-inner">
+    <span class="section-label reveal">04 — Методы</span>
+    <h2 class="section-heading reveal reveal-delay-1">Как проводилась<br>работа?</h2>
+    <div class="methods-grid">
+      <div class="method-card m1 reveal reveal-delay-2">
+        <div class="method-icon">🔍</div>
+        <div class="method-title">Анализ литературы</div>
+        <div class="method-body">Изучение научных статей, публицистики, официальных отчётов компаний Catapult, Kitman Labs, FIFA и других организаций.</div>
+      </div>
+      <div class="method-card m2 reveal reveal-delay-3">
+        <div class="method-icon">📊</div>
+        <div class="method-title">Сравнительный анализ</div>
+        <div class="method-body">Сопоставление ИИ-сервисов по единым критериям: наличие ИИ-функций, доступность без VPN в России, применимость при травме.</div>
+      </div>
+      <div class="method-card m3 reveal reveal-delay-3">
+        <div class="method-icon">🗂️</div>
+        <div class="method-title">Систематизация данных</div>
+        <div class="method-body">Классификация направлений применения ИИ в спорте, составление сводных таблиц и структурирование результатов.</div>
+      </div>
+      <div class="method-card m4 reveal reveal-delay-4">
+        <div class="method-icon">💡</div>
+        <div class="method-title">Обобщение</div>
+        <div class="method-body">Формулировка практических рекомендаций на основе собранных данных с учётом реальных ограничений пользователей в России.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 5 — РЕЗУЛЬТАТЫ: ИИ В СПОРТЕ
+════════════════════════════════════════════ -->
+<section id="results">
+  <div class="blob" style="width:500px;height:500px;background:var(--teal);top:-100px;left:50%;opacity:.1;"></div>
+  <div class="section-inner" style="max-width:1200px;">
+    <span class="section-label reveal">05 — Полученные результаты</span>
+    <h2 class="section-heading reveal reveal-delay-1">ИИ в профессиональном спорте:<br>ключевые факты</h2>
+
+    <div class="stats-row">
+      <div class="stat-card s1 reveal reveal-delay-2">
+        <div class="stat-num" data-target="3000" data-suffix="+">0</div>
+        <div class="stat-label">команд используют Catapult по всему миру</div>
+      </div>
+      <div class="stat-card s2 reveal reveal-delay-3">
+        <div class="stat-num" data-target="18" data-suffix=" дней">0</div>
+        <div class="stat-label">в среднем теряет игрок из-за травм за сезон</div>
+      </div>
+      <div class="stat-card s3 reveal reveal-delay-4">
+        <div class="stat-num" data-target="22" data-prefix="до -" data-suffix="%">0</div>
+        <div class="stat-label">снижение травм при Kitman Labs</div>
+      </div>
+      <div class="stat-card s4 reveal reveal-delay-5">
+        <div class="stat-num" data-target="10000" data-suffix="">0</div>
+        <div class="stat-label">кадров/сек — фотофиниш на Олимпиаде</div>
+      </div>
+    </div>
+
+    <div class="results-grid">
+      <div class="res-card r1 reveal reveal-delay-2">
+        <div class="res-icon-wrap">📹</div>
+        <div>
+          <div class="res-title">Видеоаналитика</div>
+          <div class="res-body">Hawk-Eye, Second Spectrum — отслеживание всех игроков 25 раз/сек. С 2021 г. Уимблдон отказался от боковых судей.</div>
+        </div>
+      </div>
+      <div class="res-card r2 reveal reveal-delay-3">
+        <div class="res-icon-wrap">🏃</div>
+        <div>
+          <div class="res-title">Персонализация тренировок</div>
+          <div class="res-body">GPS-жилеты + ИИ = план нагрузки под физиологию каждого спортсмена. Catapult: индекс восстановления каждый день.</div>
+        </div>
+      </div>
+      <div class="res-card r3 reveal reveal-delay-3">
+        <div class="res-icon-wrap">🛡️</div>
+        <div>
+          <div class="res-title">Профилактика травм</div>
+          <div class="res-body">Kitman Labs анализирует усталость, асимметрию сил, историю травм. Индекс риска каждое утро — тренер решает.</div>
+        </div>
+      </div>
+      <div class="res-card r4 reveal reveal-delay-4">
+        <div class="res-icon-wrap">⚖️</div>
+        <div>
+          <div class="res-title">Автоматическое судейство</div>
+          <div class="res-body">VAR, Semi-Automated Offside (ЧМ-2022): 12 камер + 29 точек тела = офсайд за 2 секунды вместо нескольких минут.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 6 — СЕРВИСЫ В РОССИИ
+════════════════════════════════════════════ -->
+<section id="russia">
+  <div class="blob" style="width:400px;height:400px;background:var(--coral);bottom:-50px;right:-50px;opacity:.1;"></div>
+  <div class="section-inner" style="max-width:1100px;">
+    <span class="section-label reveal">06 — Практическая часть</span>
+    <h2 class="section-heading reveal reveal-delay-1">ИИ-сервисы,<br>доступные в России</h2>
+    <table class="services-table reveal reveal-delay-2">
+      <thead>
+        <tr>
+          <th>Сервис</th>
+          <th>Применимость при травме</th>
+          <th>Ключевые ИИ-функции</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="svc-name"><span class="svc-icon">⌚</span>Garmin Connect</div></td>
+          <td><span class="badge badge-high">Высокая</span></td>
+          <td class="svc-funcs">Вариабельность ЧСС, VO2max, индекс восстановления, стресс</td>
+        </tr>
+        <tr>
+          <td><div class="svc-name"><span class="svc-icon">📱</span>Huawei Health</div></td>
+          <td><span class="badge badge-high">Высокая</span></td>
+          <td class="svc-funcs">Стресс, фазы сна, SpO2, пассивный мониторинг 24/7</td>
+        </tr>
+        <tr>
+          <td><div class="svc-name"><span class="svc-icon">❤️</span>VK Здоровье</div></td>
+          <td><span class="badge badge-high">Высокая</span></td>
+          <td class="svc-funcs">Пульс, сон, рекомендации по активности, анализ динамики</td>
+        </tr>
+        <tr>
+          <td><div class="svc-name"><span class="svc-icon">🏥</span>СберЗдоровье</div></td>
+          <td><span class="badge badge-high">Высокая</span></td>
+          <td class="svc-funcs">ИИ-ассистент, дистанционные консультации врача, анализ симптомов</td>
+        </tr>
+        <tr>
+          <td><div class="svc-name"><span class="svc-icon">🔢</span>Mi Fitness (Xiaomi)</div></td>
+          <td><span class="badge badge-mid">Средняя</span></td>
+          <td class="svc-funcs">Базовый мониторинг: шаги, ЧСС, сон без глубокого анализа</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 7 — ИИ ПРИ ТРАВМЕ
+════════════════════════════════════════════ -->
+<section id="injury">
+  <div class="blob" style="width:450px;height:450px;background:var(--purple);top:50%;left:-100px;opacity:.1;"></div>
+  <div class="section-inner" style="max-width:1100px;">
+    <span class="section-label reveal">07 — ИИ при ограниченной нагрузке</span>
+    <h2 class="section-heading reveal reveal-delay-1">Что может ИИ<br>когда нельзя тренироваться?</h2>
+    <div class="injury-intro reveal reveal-delay-2">
+      <div class="injury-intro-icon">🦵</div>
+      <div class="injury-intro-text">При травме ноги активные занятия физкультурой невозможны. Но <strong>ИИ-инструменты пассивного мониторинга</strong> позволяют отслеживать состояние здоровья, динамику восстановления и вести полноценный цифровой дневник самоконтроля — всё это без каких-либо упражнений.</div>
+    </div>
+    <div class="monitor-grid">
+      <div class="monitor-card mc1 reveal reveal-delay-2">
+        <span class="mc-icon">💓</span>
+        <div class="mc-title">Вариабельность ЧСС</div>
+        <div class="mc-body">Измеряется умными часами без нагрузки. Отражает восстановление нервной системы. Снижение в динамике — сигнал проблемы.</div>
+      </div>
+      <div class="monitor-card mc2 reveal reveal-delay-3">
+        <span class="mc-icon">😴</span>
+        <div class="mc-title">Качество сна</div>
+        <div class="mc-body">Huawei и Xiaomi анализируют фазы сна автоматически. Полноценный сон — ключевой фактор реабилитации.</div>
+      </div>
+      <div class="monitor-card mc3 reveal reveal-delay-3">
+        <span class="mc-icon">🧘</span>
+        <div class="mc-title">Уровень стресса</div>
+        <div class="mc-body">Рассчитывается по ЧСС в фоновом режиме. Garmin и Huawei строят суточную динамику без участия пользователя.</div>
+      </div>
+      <div class="monitor-card mc4 reveal reveal-delay-4">
+        <span class="mc-icon">💪</span>
+        <div class="mc-title">Упражнения для рук</div>
+        <div class="mc-body">ИИ-тренер (Huawei Health) строит программу для плечевого пояса и корпуса с учётом ограничений нижних конечностей.</div>
+      </div>
+      <div class="monitor-card mc5 reveal reveal-delay-4">
+        <span class="mc-icon">📔</span>
+        <div class="mc-title">Цифровой дневник</div>
+        <div class="mc-body">Данные фиксируются с часов автоматически. Графики динамики — готовый цифровой дневник самоконтроля.</div>
+      </div>
+      <div class="monitor-card mc6 reveal reveal-delay-5">
+        <span class="mc-icon">👨‍⚕️</span>
+        <div class="mc-title">СберЗдоровье</div>
+        <div class="mc-body">Дистанционные консультации врача с ИИ-ассистентом. Контроль реабилитации без поездок в клинику.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 8 — ПРОБЛЕМЫ
+════════════════════════════════════════════ -->
+<section id="problems">
+  <div class="blob" style="width:400px;height:400px;background:var(--amber);top:-80px;right:-80px;opacity:.08;"></div>
+  <div class="section-inner">
+    <span class="section-label reveal">08 — Проблемы</span>
+    <h2 class="section-heading reveal reveal-delay-1">Ограничения<br>и сложности</h2>
+    <div class="problems-grid">
+      <div class="prob-card p1 reveal reveal-delay-2">
+        <span class="prob-icon">💰</span>
+        <div class="prob-title">Технологическое неравенство</div>
+        <div class="prob-body">Профессиональные системы стоят сотни тысяч рублей в год. Большинство российских школ и региональных клубов не могут их купить.</div>
+      </div>
+      <div class="prob-card p2 reveal reveal-delay-3">
+        <span class="prob-icon">🔒</span>
+        <div class="prob-title">Защита персональных данных</div>
+        <div class="prob-body">Носимые устройства непрерывно собирают биометрию. Вопросы о правах на данные законодательно не урегулированы.</div>
+      </div>
+      <div class="prob-card p3 reveal reveal-delay-3">
+        <span class="prob-icon">🤔</span>
+        <div class="prob-title">Алгоритм vs специалист</div>
+        <div class="prob-body">ИИ ошибается в нетипичных ситуациях и работает на исторических данных. Тренер или врач с опытом нередко точнее.</div>
+      </div>
+      <div class="prob-card p4 reveal reveal-delay-4">
+        <span class="prob-icon">🌐</span>
+        <div class="prob-title">Недоступность платформ</div>
+        <div class="prob-body">Catapult, Second Spectrum, Stats Perform ограниченно доступны в России. Отечественные аналоги пока уступают по функциям.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 9 — ЗАКЛЮЧЕНИЕ
+════════════════════════════════════════════ -->
+<section id="conclusion">
+  <div class="blob" style="width:600px;height:600px;background:var(--purple);top:-200px;left:50%;transform:translateX(-50%);opacity:.2;"></div>
+  <div class="section-inner" style="max-width:900px;display:flex;flex-direction:column;align-items:center;text-align:center;z-index:1;">
+    <span class="section-label reveal" style="margin-bottom:1.5rem;">09 — Заключение</span>
+    <h2 class="conclusion-heading reveal reveal-delay-1">Цель достигнута</h2>
+    <p class="conclusion-sub reveal reveal-delay-2">Основные выводы по итогам проектной работы</p>
+
+    <div class="conclusions-list">
+      <div class="conc-item reveal reveal-delay-2">
+        <span class="conc-check">✅</span>
+        <div class="conc-content">
+          <div class="conc-title">ИИ уже изменил профессиональный спорт</div>
+          <div class="conc-body">Видеоаналитика, персонализация нагрузок, профилактика травм и автосудейство — задокументированные результаты, а не теория.</div>
+        </div>
+      </div>
+      <div class="conc-item reveal reveal-delay-3">
+        <span class="conc-check">✅</span>
+        <div class="conc-content">
+          <div class="conc-title">Лучшие сервисы для реабилитации в России</div>
+          <div class="conc-body">Garmin Connect и Huawei Health — наиболее полный пассивный мониторинг. СберЗдоровье — дистанционный контроль врача без VPN.</div>
+        </div>
+      </div>
+      <div class="conc-item reveal reveal-delay-4">
+        <span class="conc-check">✅</span>
+        <div class="conc-content">
+          <div class="conc-title">ИИ работает даже без физической активности</div>
+          <div class="conc-body">Вариабельность ЧСС, качество сна, уровень стресса — всё фиксируется автоматически. Это полноценный цифровой дневник самоконтроля.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="significance-box reveal reveal-delay-4">
+      <span class="sig-label">🎯 Практическая значимость</span>
+      <p class="sig-text">Результаты этого проекта были бы полезны автору ещё <em>до начала работы над ним</em>. Перечень доступных инструментов может использоваться студентами на реабилитации и преподавателями физкультуры при работе со специальной медицинской группой.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">Применение ИИ в физической культуре и спорте &nbsp;•&nbsp; Проектная работа &nbsp;•&nbsp; 2024–2025</div>
+  <div class="footer-right">Физическая культура</div>
+</footer>
+
+<script>
+// ── Custom cursor ─────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+});
+function animateRing() {
+  rx += (mx - rx - 18) * .12;
+  ry += (my - ry - 18) * .12;
+  ring.style.transform = `translate(${rx}px, ${ry}px)`;
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+// ── Progress bar ──────────────────────────────────────────────────────
+const bar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = pct + '%';
+});
+
+// ── Scroll reveal ─────────────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Counter animation ─────────────────────────────────────────────────
+function animateCounter(el) {
+  const target = +el.dataset.target;
+  const suffix = el.dataset.suffix || '';
+  const prefix = el.dataset.prefix || '';
+  const duration = 1400;
+  const start = performance.now();
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const value = Math.round(target * ease);
+    el.textContent = prefix + value.toLocaleString('ru-RU') + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.counted) {
+      e.target.dataset.counted = '1';
+      animateCounter(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-num[data-target]').forEach(el => counterObserver.observe(el));
+
+// ── Active nav link ───────────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id');
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current
+      ? 'var(--purple)' : 'rgba(255,255,255,.6)';
+  });
+});
+
+// ── Parallax blobs ────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  document.querySelectorAll('.blob').forEach((b, i) => {
+    b.style.transform = `translateY(${y * (i % 2 === 0 ? .05 : -.04)}px)`;
+  });
+});
+</script>
+</body>
+</html>
